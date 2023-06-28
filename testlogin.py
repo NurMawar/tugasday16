@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service as ChromeService
 
-class MyInfo(unittest.TestCase):
+class Personal(unittest.TestCase):
 
     def setUp(self):
         self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
@@ -40,7 +40,7 @@ class MyInfo(unittest.TestCase):
         #validation
         assert driver.find_element(By.XPATH, "/html/body/div/div[2]")
 
-    def _Success_Edit_Employeeid(self):
+    def test__Success_Edit_Employeeid(self):
         driver = self.driver
         driver.get("https://opensource-demo.orangehrmlive.com") # buka situs
         time.sleep(3)
@@ -61,7 +61,7 @@ class MyInfo(unittest.TestCase):
         #validation
         assert driver.find_element(By.XPATH, "/html/body/div/div[2]")
 
-    def _Success_Edit_Nickname(self):
+    def test__Success_Edit_Nickname(self):
         driver = self.driver
         driver.get("https://opensource-demo.orangehrmlive.com") # buka situs
         time.sleep(3)
@@ -82,7 +82,7 @@ class MyInfo(unittest.TestCase):
         #validation
         assert driver.find_element(By.XPATH, "/html/body/div/div[2]")
 
-    def _Failed_Edit_Personal_Details(self):
+    def test__Failed_Edit_Personal_Details(self):
         driver = self.driver
         driver.get("https://opensource-demo.orangehrmlive.com") # buka situs
         time.sleep(3)

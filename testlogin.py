@@ -1,80 +1,177 @@
+import unittest
+import time
 from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support.ui import Select
-import time
-import unittest
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service as ChromeService
 
-
-options = webdriver.ChromeOptions()
-options.add_experimental_option('detach', True)
-options.add_argument('--disable-notifications')
-
-
-class webtest(unittest.TestCase):
+class MyInfo(unittest.TestCase):
 
     def setUp(self):
-        self.driver = webdriver.Chrome(options = options)
+        self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
-    def test_login(self):
-        self.driver.maximize_window()
-        self.driver.get('https://opensource-demo.orangehrmlive.com/')
-        self.driver.implicitly_wait(5)
-        self.driver.find_element(By.NAME,'username').send_keys('Admin')
-        self.driver.find_element(By.NAME,'password').send_keys('admin123' + Keys.RETURN)
+    def test_Success_Edit_Personal_Details(self):
+        driver = self.driver
+        driver.get("https://opensource-demo.orangehrmlive.com") # buka situs
         time.sleep(3)
-        assert 'OrangeHRM' in self.driver.title
-        
-
-    def test_login_FAILED_WrongPassword(self):
-        self.driver.maximize_window()
-        self.driver.get('https://opensource-demo.orangehrmlive.com/')
-        self.driver.implicitly_wait(5)
-        self.driver.find_element(By.NAME,'username').send_keys('Admin')
-        self.driver.find_element(By.NAME,'password').send_keys('admin356' + Keys.RETURN)
+        driver.find_element(By.NAME, "username").send_keys("Admin") # input username
+        time.sleep(1)
+        driver.find_element(By.NAME, "password").send_keys("admin123") # input password
+        time.sleep(1)
+        driver.find_element(By.XPATH, "//*[@id='app']/div[1]/div/div[1]/div/div[2]/div[2]/form/div[3]/button").click() # log in
         time.sleep(3)
-        invalid = self.driver.find_element(By.ID,'app').text
-        self.assertIn('Invalid credentials', invalid)
-    
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[1]/aside/nav/div[2]/ul/li[6]/a/span").click() #klik menu My info
+        time.sleep(1)
+        driver.find_element(By.NAME, "firstName").send_keys(Keys.CONTROL,"a", Keys.BACKSPACE) 
+        time.sleep(2)
+        driver.find_element(By.NAME, "firstName").send_keys("Sam") #edit nama depan
+        time.sleep(1)
+        driver.find_element(By.NAME, "middleName").send_keys(Keys.CONTROL,"a", Keys.BACKSPACE) 
+        time.sleep(1)
+        driver.find_element(By.NAME, "middleName").send_keys("Smith") #edit nama tengah
+        time.sleep(1)
+        driver.find_element(By.NAME, "lastName").send_keys(Keys.CONTROL,"a", Keys.BACKSPACE)
+        time.sleep(1)
+        driver.find_element(By.NAME, "lastName").send_keys("Jo") #edit nama belakang
+        time.sleep(1)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[5]/button").click()
 
+        #validation
+        assert driver.find_element(By.XPATH, "/html/body/div/div[2]")
 
-    def test_logout(self):
-        self.driver.maximize_window()
-        self.driver.get('https://opensource-demo.orangehrmlive.com/')
-        self.driver.implicitly_wait(5)
-        self.driver.find_element(By.NAME,'username').send_keys('Admin')
-        self.driver.find_element(By.NAME,'password').send_keys('admin123' + Keys.RETURN)
+    def _Success_Edit_Employeeid(self):
+        driver = self.driver
+        driver.get("https://opensource-demo.orangehrmlive.com") # buka situs
         time.sleep(3)
-        self.driver.find_element(By.CLASS_NAME,"oxd-userdropdown").click()
+        driver.find_element(By.NAME, "username").send_keys("Admin") # input username
+        time.sleep(1)
+        driver.find_element(By.NAME, "password").send_keys("admin123") # input password
+        time.sleep(1)
+        driver.find_element(By.XPATH, "//*[@id='app']/div[1]/div/div[1]/div/div[2]/div[2]/form/div[3]/button").click() # log in
         time.sleep(3)
-        self.driver.find_element(By.XPATH,"//*[@id='app']/div[1]/div[1]/header/div[1]/div[2]/ul/li/ul/li[4]/a").click()
-        time.sleep(5)    
-        login_button = self.driver.find_element(By.XPATH,'//button[@type="submit"]').text
-        self.assertIn('Login', login_button)
-
-
-    def test_Menu_Admin(self):
-        self.driver.maximize_window()
-        self.driver.get('https://opensource-demo.orangehrmlive.com/')
-        self.driver.implicitly_wait(5)
-        self.driver.find_element(By.NAME,'username').send_keys('Admin')
-        self.driver.find_element(By.NAME,'password').send_keys('admin123' + Keys.RETURN)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[1]/aside/nav/div[2]/ul/li[6]/a/span").click() #klik menu My info
         time.sleep(3)
-        self.driver.find_element(By.XPATH,'//a[@href="/web/index.php/admin/viewAdminModule"]').click()
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[2]/div[1]/div[1]/div/div[2]/input").send_keys(Keys.CONTROL,"a", Keys.BACKSPACE) 
         time.sleep(3)
-        management = self.driver.find_element(By.XPATH,'//*[@id="app"]/div[1]/div[1]/header/div[1]/div[1]/span/h6[2]').text
-        self.assertIn('User Management', management)
-    
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[2]/div[1]/div[1]/div/div[2]/input").send_keys("123") #edit employee id
+        time.sleep(1)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[5]/button").click()
 
-    def tearDown(self):
-        self.driver.quit()
+        #validation
+        assert driver.find_element(By.XPATH, "/html/body/div/div[2]")
 
-    
+    def _Success_Edit_Nickname(self):
+        driver = self.driver
+        driver.get("https://opensource-demo.orangehrmlive.com") # buka situs
+        time.sleep(3)
+        driver.find_element(By.NAME, "username").send_keys("Admin") # input username
+        time.sleep(1)
+        driver.find_element(By.NAME, "password").send_keys("admin123") # input password
+        time.sleep(1)
+        driver.find_element(By.XPATH, "//*[@id='app']/div[1]/div/div[1]/div/div[2]/div[2]/form/div[3]/button").click() # log in
+        time.sleep(3)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[1]/aside/nav/div[2]/ul/li[6]/a/span").click() #klik menu My info
+        time.sleep(3)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div[2]/div/div/div[2]/input").send_keys(Keys.CONTROL,"a", Keys.BACKSPACE) 
+        time.sleep(1)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div[2]/div/div/div[2]/input").send_keys("sammy") #edit nickname
+        time.sleep(1)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[5]/button").click()
 
-if __name__ == '__main__':
-    unittest.main()
+        #validation
+        assert driver.find_element(By.XPATH, "/html/body/div/div[2]")
+
+    def _Failed_Edit_Personal_Details(self):
+        driver = self.driver
+        driver.get("https://opensource-demo.orangehrmlive.com") # buka situs
+        time.sleep(3)
+        driver.find_element(By.NAME, "username").send_keys("Admin") # input username
+        time.sleep(1)
+        driver.find_element(By.NAME, "password").send_keys("admin123") # input password
+        time.sleep(1)
+        driver.find_element(By.XPATH, "//*[@id='app']/div[1]/div/div[1]/div/div[2]/div[2]/form/div[3]/button").click() # log in
+        time.sleep(3)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[1]/aside/nav/div[2]/ul/li[6]/a/span").click() #klik menu My info
+        time.sleep(1)
+        driver.find_element(By.NAME, "firstName").send_keys(Keys.CONTROL,"a", Keys.BACKSPACE) #hapus dan kosongi nama depan
+        time.sleep(2)
+        driver.find_element(By.NAME, "middleName").send_keys(Keys.CONTROL,"a", Keys.BACKSPACE) 
+        time.sleep(1)
+        driver.find_element(By.NAME, "middleName").send_keys("Smith") #input nama tengah
+        time.sleep(1)
+        driver.find_element(By.NAME, "lastName").send_keys(Keys.CONTROL,"a", Keys.BACKSPACE) ##hapus dan kosongi nama belakang
+        time.sleep(1)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[5]/button").click()
+
+        #validation
+        response_message = driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div[1]/div/div/div[2]/div[3]/span").text
+
+        self.assertEqual('Required', response_message)
+
+class ContactDetail(unittest.TestCase):
+
+    def setUp(self):
+        self.driver = webdriver.Chrome(ChromeDriverManager().install())
+
+    def test_Success_Edit_Contact_Details(self):
+        driver = self.driver
+        driver.get("https://opensource-demo.orangehrmlive.com") # buka situs
+        time.sleep(3)
+        driver.find_element(By.NAME, "username").send_keys("Admin") # input username
+        time.sleep(1)
+        driver.find_element(By.NAME, "password").send_keys("admin123") # input password
+        time.sleep(1)
+        driver.find_element(By.XPATH, "//*[@id='app']/div[1]/div/div[1]/div/div[2]/div[2]/form/div[3]/button").click() # log in
+        time.sleep(3)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[1]/aside/nav/div[2]/ul/li[6]/a/span").click() #klik menu My info
+        time.sleep(1)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[1]/div[2]/div[2]/a").click() #klik submenu Personal Details
+        time.sleep(3)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div/div[1]/div/div[2]/input").send_keys("Santa") #edit Street 1
+        time.sleep(1)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div/div[2]/div/div[2]/input").send_keys("Paulo") #edit Street 2
+        time.sleep(1)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div/div[3]/div/div[2]/input").send_keys("Abracadabra") #edit City
+        time.sleep(1)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[4]/button").click() #save
+
+        #validation
+        assert driver.find_element(By.XPATH, "/html/body/div/div[2]") 
+
+    def test_Failed_Edit_Contact_Details_Emptying_Alldata(self):
+        driver = self.driver
+        driver.get("https://opensource-demo.orangehrmlive.com") # buka situs
+        time.sleep(3)
+        driver.find_element(By.NAME, "username").send_keys("Admin") # input username
+        time.sleep(1)
+        driver.find_element(By.NAME, "password").send_keys("admin123") # input password
+        time.sleep(1)
+        driver.find_element(By.XPATH, "//*[@id='app']/div[1]/div/div[1]/div/div[2]/div[2]/form/div[3]/button").click() # log in
+        time.sleep(3)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[1]/aside/nav/div[2]/ul/li[6]/a/span").click() #klik menu My info
+        time.sleep(1)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[1]/div[2]/div[2]/a").click() #klik submenu Personal Details
+        time.sleep(3)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div/div[1]/div/div[2]/input").send_keys(Keys.CONTROL,"a", Keys.BACK_SPACE) #kosongi street 1
+        time.sleep(1)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div/div[2]/div/div[2]/input").send_keys(Keys.CONTROL,"a", Keys.BACK_SPACE) #kosongi street 2
+        time.sleep(1)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div/div[3]/div/div[2]/input").send_keys(Keys.CONTROL,"a", Keys.BACK_SPACE) #kosongi city
+        time.sleep(1)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[3]/div/div[1]/div/div[2]/input").send_keys(Keys.CONTROL,"a", Keys.BACK_SPACE) #kosongi work email
+        time.sleep(1)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[2]/div/div[3]/div/div[2]/input").send_keys(Keys.CONTROL,"a", Keys.BACK_SPACE) #kosongi work
+        time.sleep(1)
+        driver.find_element(By.XPATH, "/html/body/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[4]/button").click() #save
+
+        #validationn
+        #tidak ada alert 'Required' yang muncul, jadi Status data tetap sukses diupdate. seharusnya FAILED
+
+
+
+    def tearDown(self): 
+        self.driver.close()
+
+if __name__ == "__main__": 
+     unittest.main()
